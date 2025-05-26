@@ -12,11 +12,12 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'chrome-extension://bfgpkgemhfihdmhapbnjaedohghpechg',
-    'http://localhost:5000',
+    'chrome-extension://',
+    'http://localhost:3000',
     'https://promptly-tuhj.onrender.com'
   ],
-  credentials: true // if you're using cookies or authorization headers
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
