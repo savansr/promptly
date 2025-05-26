@@ -11,11 +11,14 @@ const app = express();
 
 
 app.use(cors({
-  origin: ['chrome-extension://*',"*"],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: [
+    'chrome-extension://',
+    'http://localhost:5000',
+    'https://promptly-tuhj.onrender.com'
+  ],
+  credentials: true // if you're using cookies or authorization headers
 }));
+
 app.use(express.json());
 
 // MongoDB Connection
