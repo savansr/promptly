@@ -10,7 +10,12 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors());
+app.use(cors({
+  origin: ['chrome-extension://'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}));
 app.use(express.json());
 
 // MongoDB Connection
