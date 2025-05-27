@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-     'chrome-extension://eflngkjfcepclomfhcfagpfoflogkggn'
+     'chrome-extension://eflngkjfcepclomfhcfagpfoflogkggn',
     'http://localhost:5174',  
     'chrome-extension://',
   ],
