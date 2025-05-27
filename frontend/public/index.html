@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Promptly - AI Prompt Manager" />
+    <title>Promptly</title>
+    <style>
+        html, body {
+            width: 400px;
+            height: 600px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        #root {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 400px;
+            height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9fafb;
+        }
+        /* Prevent text selection */
+        * {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        /* Allow text selection in input fields */
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+    </style>
+</head>
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+</body>
+</html>
