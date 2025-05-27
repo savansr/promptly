@@ -6,6 +6,7 @@ Promptly is a Chrome extension that helps you manage and organize your AI prompt
 
 - Store and organize AI prompts
 - Categorize prompts for easy access
+- Enhance Your prompts for LLM response
 - Quick access through Chrome extension
 - User authentication and secure storage
 - Modern and intuitive user interface
