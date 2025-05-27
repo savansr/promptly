@@ -78,7 +78,6 @@ project/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/    # React components
-│   │   ├── services/     # API services
 │   │   ├── store/        # Redux store
 │   │   ├── utils/        # Utility functions
 │   │   └── App.js        # Main application component
