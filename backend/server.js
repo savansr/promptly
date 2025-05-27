@@ -12,9 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'http://localhost:3000',
-    'https://promptly-tuhj.onrender.com'
-    
+    'http://localhost:3000',  
     'chrome-extension://',
   ],
   credentials: true,
