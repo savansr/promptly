@@ -1,5 +1,6 @@
 const Prompt = require('../models/Prompt');
 const { Groq } = require('groq-sdk');
+const { getCache, setCache, delCache } = require('../redis/redis.client');
 
 // Create a new prompt
 const createPrompt = async (req, res) => {
@@ -11,6 +12,11 @@ const createPrompt = async (req, res) => {
       user: req.userId
     });
     await prompt.save();
+
+    // Invalidate the user's prompt list cache 
+    delCache(`prompts:list:${req.userId}:sort=latest`);
+    delCache(`prompts:list:${req.userId}:sort=oldest`);
+
     res.status(201).json(prompt);
   } catch (error) {
     res.status(500).json({ message: 'Error creating prompt', error: error.message });
@@ -22,14 +28,23 @@ const getPrompts = async (req, res) => {
   try {
     const { sort = 'latest', tag } = req.query;
     let query = { user: req.userId };
-    
+
     if (tag) {
       query.tags = tag;
     }
 
+    const cacheKey = `prompts:list:${req.userId}:sort=${sort}${tag ? `:tag=${tag}` : ''}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const prompts = await Prompt.find(query)
       .sort({ createdAt: sort === 'latest' ? -1 : 1 });
-    
+
+    // Cache for 60 seconds
+    setCache(cacheKey, prompts, 60);
+
     res.json(prompts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching prompts', error: error.message });
@@ -43,11 +58,15 @@ const deletePrompt = async (req, res) => {
       _id: req.params.id,
       user: req.userId
     });
-    
+
     if (!prompt) {
       return res.status(404).json({ message: 'Prompt not found' });
     }
-    
+
+    // Invalidate the user's prompt list cache (both common sorts)
+    delCache(`prompts:list:${req.userId}:sort=latest`);
+    delCache(`prompts:list:${req.userId}:sort=oldest`);
+
     res.json({ message: 'Prompt deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting prompt', error: error.message });
@@ -65,6 +84,13 @@ const enhancePrompt = async (req, res) => {
 
     if (!process.env.GROQ_API_KEY) {
       return res.status(500).json({ message: 'Groq API key is not configured' });
+    }
+
+    // cache key per-user to avoid cross-user leakage, plus hash of input
+    const cacheKey = `prompts:enhance:${req.userId}:${Buffer.from(prompt).toString('base64').slice(0,64)}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json({ enhancedPrompt: cached });
     }
 
     const groq = new Groq({
@@ -113,6 +139,9 @@ In your final response, only include the enhanced version of prompt and nothing 
     if (!enhancedContent) {
       throw new Error('Invalid response from Groq API');
     }
+
+    // Cache  for 5 minutes
+    setCache(cacheKey, enhancedContent, 300);
 
     res.json({ enhancedPrompt: enhancedContent });
 
