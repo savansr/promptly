@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const promptRoutes = require('./routes/prompts');
 const {connectRedis} = require('./redis/redis.client');
-
+const {authMiddleWare}=require('./middleware/authenticate.js');
 
 
 dotenv.config();
@@ -37,6 +37,7 @@ mongoose.connect( 'mongodb://localhost:27017/promptly')
   });
 
 // Routes
+app.use(authMiddleWare);
 app.use('/auth', authRoutes);
 app.use('/prompts', promptRoutes);
 
@@ -45,3 +46,4 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
 }); 
+
